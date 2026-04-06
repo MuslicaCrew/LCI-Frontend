@@ -30,12 +30,22 @@
                             <ContentPresenter HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource ForegroundBrush}"/>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource ButtonBackgroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="MenuButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        <Style x:Key="MenuButton" x:Name="button" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
             <Setter Property="Background" Value="{StaticResource ButtonBackgroundBrush}"/>
         </Style>
 
