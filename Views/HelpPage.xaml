@@ -1,0 +1,57 @@
+<Page x:Class="LungCancerIdentifierFrontEnd.Views.HelpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource AppBackgroundBrush}">
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0"
+                Content="← Back"
+                Style="{StaticResource BackButton}"
+                HorizontalAlignment="Left"
+                Click="Back_Click"/>
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MaxWidth="520">
+
+            <TextBlock Text="How to Use MyApp"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource ForegroundBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+
+           
+            <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="1.  Start" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Press Start on the home screen to open the file browser. Navigate to any file on your system and select it — its full path will be displayed."
+                               FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="2.  Help" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="You're looking at it! This screen explains how the app works. Press the Back button to return to the home screen at any time."
+                               FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="3.  Quit" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Press Quit on the home screen to close the application safely."
+                               FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </Grid>
+</Page>

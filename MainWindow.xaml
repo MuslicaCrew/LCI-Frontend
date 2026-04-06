@@ -1,0 +1,13 @@
+<Window x:Class="LungCancerIdentifierFrontEnd.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MyApp"
+        Height="500" Width="750"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}"
+        ResizeMode="CanResizeWithGrip">
+    <Grid>
+        <Frame x:Name="MainFrame"
+               NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window>
