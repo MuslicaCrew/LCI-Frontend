@@ -1,8 +1,10 @@
 <Window x:Class="LungCancerIdentifierFrontEnd.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MyApp"
-        Height="500" Width="750"
+        Title="LCI"
+        Icon="D:\Szakdoga\LungCancerIdentifierFrontEnd\lung.png"
+        WindowStyle="SingleBorderWindow"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource AppBackgroundBrush}"
         ResizeMode="CanResizeWithGrip">

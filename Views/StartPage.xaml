@@ -20,7 +20,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
 
-            <TextBlock Text="Open a DICOM file for scanning"
+            <TextBlock Text="Open a patch file for scanning"
                        FontSize="32"
                        FontWeight="Bold"
                        Foreground="{StaticResource ForegroundBrush}"
@@ -33,11 +33,61 @@
                        HorizontalAlignment="Center"
                        Margin="0,0,0,20"/>
 
+            <TextBlock x:Name="ResultText"
+                       Text="Your results will appear here."
+                    Foreground="{StaticResource ForegroundBrush}"
+                    FontSize="16"
+                       HorizontalAlignment="Center"
+                    Margin="0,15,0,20"/>
+
+
+            <StackPanel HorizontalAlignment="Center">
+                <Grid Width="384" Height="384" Margin="0,20,0,0">
+                    <Image x:Name="BaseImage"
+               Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <Image x:Name="OverlayImage"
+               Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </Grid>
+                <TextBlock x:Name="SliceText"
+           Text="Slice 32 / 64"
+           Foreground="{StaticResource ForegroundBrush}"
+           HorizontalAlignment="Center"
+           Margin="0,8,0,0"/>
+                <Grid Width="384" Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+               Text="1"
+               Foreground="{StaticResource ForegroundBrush}"
+               VerticalAlignment="Center"
+               Margin="0,0,8,0"/>
+
+                    <Slider Grid.Column="1"
+            x:Name="SliceSlider"
+            Minimum="0" Maximum="63" Value="32"
+            VerticalAlignment="Center"
+            IsEnabled="False"
+            ValueChanged="SliceSlider_ValueChanged"/>
+
+                    <TextBlock Grid.Column="2"
+               Text="64"
+               Foreground="{StaticResource ForegroundBrush}"
+               VerticalAlignment="Center"
+               Margin="8,0,0,0"/>
+                </Grid>
+            </StackPanel>
+
             <!-- Open File Button -->
             <Button Content="📂  Browse File"
                     Style="{StaticResource OpenFileButton}"
                     HorizontalAlignment="Center"
-                    Margin="0,0,0,20"
+                    Margin="0,20,0,20"
                     Click="OpenFile_Click"/>
 
             <!-- File path display box -->

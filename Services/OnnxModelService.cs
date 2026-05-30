@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using static LungCancerIdentifierFrontEnd.Services.OnnxModelService;
 
 namespace LungCancerIdentifierFrontEnd.Services
 {
@@ -39,55 +40,40 @@ namespace LungCancerIdentifierFrontEnd.Services
             }
         }
 
-        public static void RunInference(float[] data, int[] shape)
+        public class InferenceResult
         {
-            if (_session is null)
+            public required float ClsProbability { get; init; }
+            public required float[] SegLogits { get; init; }
+        }
+
+        public static InferenceResult? RunInference(float[] data, int[] shape)
+        {
+            float ThresholdLogit = (float)Math.Log(0.221f / 0.779f);  // logit(0.221) — the F1-optimal threshold
+            const float T = 0.4f;
+
+            if (_session is null) return null;
+
+            var inputName = _session.InputMetadata.Keys.First();
+            var tensor = new DenseTensor<float>(data, shape);
+            var inputs = new[] { NamedOnnxValue.CreateFromTensor(inputName, tensor) };
+
+            using var results = _session.Run(inputs);
+
+            float clsLogit = 0f;
+            float[] segLogits = Array.Empty<float>();
+            foreach (var r in results)
             {
-                Debug.WriteLine("[ONNX] Session is null — model not loaded.");
-                return;
+                var arr = r.AsTensor<float>().ToArray();
+                if (r.Name == "cls_prob") clsLogit = arr[0];
+                else if (r.Name == "seg_map") segLogits = arr;
             }
 
-            var expected = shape.Aggregate(1, (a, b) => a * b);
-            if (data.Length != expected)
+            return new InferenceResult
             {
-                Debug.WriteLine($"[ONNX] Size mismatch: data={data.Length}, expected={expected}");
-                return;
-            }
-
-            try
-            {
-                var inputName = _session.InputMetadata.Keys.First();
-                var tensor = new DenseTensor<float>(data, shape);
-                var inputs = new[] { NamedOnnxValue.CreateFromTensor(inputName, tensor) };
-
-                using var results = _session.Run(inputs);
-
-                foreach (var r in results)
-                {
-                    var t = r.AsTensor<float>();
-                    var arr = t.ToArray();
-                    var dims = string.Join(",", t.Dimensions.ToArray());
-
-                    Debug.WriteLine($"[ONNX] output '{r.Name}' shape=[{dims}] n={arr.Length}");
-
-                    if (arr.Length == 1)
-                    {
-                        // classifier head — sigmoid is baked in, so this is a probability
-                        Debug.WriteLine($"[ONNX]   cancer probability = {arr[0]:F6}");
-                    }
-                    else
-                    {
-                        // segmentation head — raw logits, apply sigmoid externally if you want probs
-                        Debug.WriteLine($"[ONNX]   logits  min={arr.Min():F4}  max={arr.Max():F4}  mean={arr.Average():F4}");
-                        var preview = string.Join(", ", arr.Take(10).Select(v => v.ToString("F4")));
-                        Debug.WriteLine($"[ONNX]   first 10 = [{preview}]");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[ONNX] Inference failed: {ex.Message}");
-            }
+              
+                ClsProbability = 1f / (1f + MathF.Exp(-(clsLogit - ThresholdLogit) / T)),  // sigmoid
+                SegLogits = segLogits
+            };
         }
 
         public static void Dispose()

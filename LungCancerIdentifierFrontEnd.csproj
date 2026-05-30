@@ -9,11 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="lung.png" />
     <None Remove="Models\unet3d.onnx" />
     <None Remove="Models\unet3d.onnx.data" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="lung.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Models\unet3d.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
