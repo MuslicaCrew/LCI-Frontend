@@ -7,6 +7,13 @@ using System.Linq;
 
 namespace LungCancerIdentifierFrontEnd.Services
 {
+    public class InferenceResult
+    {
+        public required float ClsProbability { get; init; }
+        public required float[] SegLogits { get; init; }
+        public required int[] SegShape { get; init; }
+    }
+
     public static class OnnxModelService
     {
         private static InferenceSession? _session;
@@ -18,20 +25,11 @@ namespace LungCancerIdentifierFrontEnd.Services
             {
                 if (!File.Exists(modelPath))
                 {
-                    Debug.WriteLine($"\n\n[ONNX] Model not found: {modelPath}\n\n");
+                    Debug.WriteLine($"[ONNX] Model not found: {modelPath}");
                     return;
                 }
-
-                var options = new SessionOptions();
-                // options.AppendExecutionProvider_CUDA(0); // if using the GPU package
-
-                _session = new InferenceSession(modelPath, options);
-
+                _session = new InferenceSession(modelPath, new SessionOptions());
                 Debug.WriteLine($"[ONNX] Loaded model: {modelPath}");
-                foreach (var kv in _session.InputMetadata)
-                    Debug.WriteLine($"[ONNX]  input  '{kv.Key}' shape=[{string.Join(",", kv.Value.Dimensions)}] dtype={kv.Value.ElementType}");
-                foreach (var kv in _session.OutputMetadata)
-                    Debug.WriteLine($"[ONNX]  output '{kv.Key}' shape=[{string.Join(",", kv.Value.Dimensions)}] dtype={kv.Value.ElementType}");
             }
             catch (Exception ex)
             {
@@ -39,19 +37,12 @@ namespace LungCancerIdentifierFrontEnd.Services
             }
         }
 
-        public static void RunInference(float[] data, int[] shape)
+        public static InferenceResult? RunInference(float[] data, int[] shape)
         {
             if (_session is null)
             {
                 Debug.WriteLine("[ONNX] Session is null — model not loaded.");
-                return;
-            }
-
-            var expected = shape.Aggregate(1, (a, b) => a * b);
-            if (data.Length != expected)
-            {
-                Debug.WriteLine($"[ONNX] Size mismatch: data={data.Length}, expected={expected}");
-                return;
+                return null;
             }
 
             try
@@ -62,31 +53,36 @@ namespace LungCancerIdentifierFrontEnd.Services
 
                 using var results = _session.Run(inputs);
 
+                float clsProb = 0f;
+                float[] segLogits = Array.Empty<float>();
+                int[] segShape = Array.Empty<int>();
+
                 foreach (var r in results)
                 {
                     var t = r.AsTensor<float>();
                     var arr = t.ToArray();
-                    var dims = string.Join(",", t.Dimensions.ToArray());
-
-                    Debug.WriteLine($"[ONNX] output '{r.Name}' shape=[{dims}] n={arr.Length}");
-
-                    if (arr.Length == 1)
+                    if (r.Name == "cls_prob") clsProb = Sigmoid(arr[0]);
+                    else if (r.Name == "seg_map")
                     {
-                        // classifier head — sigmoid is baked in, so this is a probability
-                        Debug.WriteLine($"[ONNX]   cancer probability = {arr[0]:F6}");
-                    }
-                    else
-                    {
-                        // segmentation head — raw logits, apply sigmoid externally if you want probs
-                        Debug.WriteLine($"[ONNX]   logits  min={arr.Min():F4}  max={arr.Max():F4}  mean={arr.Average():F4}");
-                        var preview = string.Join(", ", arr.Take(10).Select(v => v.ToString("F4")));
-                        Debug.WriteLine($"[ONNX]   first 10 = [{preview}]");
+                        segLogits = arr;
+                        segShape = t.Dimensions.ToArray();
                     }
                 }
+
+                Debug.WriteLine($"[ONNX] cls_prob = {clsProb:F4}  seg min/max/mean = " +
+                                $"{segLogits.Min():F3}/{segLogits.Max():F3}/{segLogits.Average():F3}");
+
+                return new InferenceResult
+                {
+                    ClsProbability = clsProb,
+                    SegLogits = segLogits,
+                    SegShape = segShape
+                };
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[ONNX] Inference failed: {ex.Message}");
+                return null;
             }
         }
 
@@ -95,5 +91,7 @@ namespace LungCancerIdentifierFrontEnd.Services
             _session?.Dispose();
             _session = null;
         }
+
+        private static float Sigmoid(float x) => 1f / (1f + MathF.Exp(-x));
     }
 }
