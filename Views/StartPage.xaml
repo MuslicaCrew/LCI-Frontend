@@ -11,7 +11,7 @@
 
      
         <Button Grid.Row="0"
-                Content="← Back"
+                Content="← Vissza"
                 Style="{StaticResource BackButton}"
                 HorizontalAlignment="Left"
                 Click="Back_Click"/>
@@ -20,21 +20,21 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
 
-            <TextBlock Text="Open a patch file for scanning"
+            <TextBlock Text="Nyisson meg egy fájlt a skenneléshez"
                        FontSize="32"
                        FontWeight="Bold"
                        Foreground="{StaticResource ForegroundBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,20"/>
 
-            <TextBlock Text="Click the button below to browse for a file on your system."
+            <TextBlock Text="Nyomja meg az alábbi gombot a tallózáshoz"
                        FontSize="14"
                        Foreground="#AAAAAA"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,20"/>
 
             <TextBlock x:Name="ResultText"
-                       Text="Your results will appear here."
+                       Text="Az eredmények itt jelennek meg"
                     Foreground="{StaticResource ForegroundBrush}"
                     FontSize="16"
                        HorizontalAlignment="Center"
@@ -51,7 +51,7 @@
                RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                 </Grid>
                 <TextBlock x:Name="SliceText"
-           Text="Slice 32 / 64"
+           Text="Szelet 32 / 64"
            Foreground="{StaticResource ForegroundBrush}"
            HorizontalAlignment="Center"
            Margin="0,8,0,0"/>
@@ -83,14 +83,13 @@
                 </Grid>
             </StackPanel>
 
-            <!-- Open File Button -->
-            <Button Content="📂  Browse File"
+       
+            <Button Content="📂  Fájlok böngészése"
                     Style="{StaticResource OpenFileButton}"
                     HorizontalAlignment="Center"
                     Margin="0,20,0,20"
                     Click="OpenFile_Click"/>
 
-            <!-- File path display box -->
             <Border Background="{StaticResource ButtonBackgroundBrush}"
                     CornerRadius="8"
                     Padding="16"
@@ -98,7 +97,7 @@
                     MinHeight="56"
                     VerticalAlignment="Center">
                 <TextBlock x:Name="FilePathText"
-                           Text="No file selected."
+                           Text="Nincs fájl kiválasztva."
                            Foreground="#AAAAAA"
                            FontSize="13"
                            TextWrapping="Wrap"

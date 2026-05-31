@@ -15,9 +15,8 @@ namespace LungCancerIdentifierFrontEnd.Views
     {
         private readonly Frame _frame;
 
-        private float[]? _patch;     // <-- add
-        private float[]? _segMap;    // <-- add
-
+        private float[]? _patch;     
+        private float[]? _segMap;    
         public StartPage(Frame frame)
         {
             InitializeComponent();
@@ -30,7 +29,7 @@ namespace LungCancerIdentifierFrontEnd.Views
             int slice = (int)e.NewValue;
             BaseImage.Source = RenderGrayscale(_patch, slice);
             OverlayImage.Source = _segMap is null ? null : RenderHeatmap(_segMap, slice);
-            SliceText.Text = $"Slice {slice + 1} / 64";
+            SliceText.Text = $"Szelet {slice + 1} / 64";
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
@@ -40,8 +39,8 @@ namespace LungCancerIdentifierFrontEnd.Views
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Select a patch",
-                Filter = "Raw patch (*.bin)|*.bin"
+                Title = "Folt kiválasztása",
+                Filter = "Nyers folt (*.bin)|*.bin"
             };
 
             if (dialog.ShowDialog() != true) return;
@@ -57,49 +56,38 @@ namespace LungCancerIdentifierFrontEnd.Views
 
                 if (result is null)
                 {
-                    ResultText.Text = "Inference failed.";
+                    ResultText.Text = "Megállapítás nem sikerült";
                     return;
                 }
 
                 String amountOfRisk = result.ClsProbability switch
                 {
-                    > 0.5f => "High probability",
-                    > 0.221f => "Moderate probability",
-                    _ => "Low probability"
+                    > 0.5f => "Magas valószinűség",
+                    > 0.221f => "Közepes valószinűség",
+                    _ => "Alacsony valószinűség"
                 };
 
-                ResultText.Text = $"Cancer probability: {result.ClsProbability:P2} {amountOfRisk}";
+                ResultText.Text = $"Daganat valószinűség: {result.ClsProbability:P2} | {amountOfRisk}";
 
                 if (result.ClsProbability >= 0.5f)
-                {
-                    // Positive: build segmap and show the most active slice with overlay
+                { 
                     _segMap = new float[result.SegLogits.Length];
                     for (int i = 0; i < result.SegLogits.Length; i++)
                     {
                         _segMap[i] = 1f / (1f + MathF.Exp(-result.SegLogits[i]));
                     }
-                    Debug.WriteLine($"max seg p = {_segMap.Max()}");
-                    Debug.WriteLine($"average seg p = {_segMap.Average()}");
-                    Debug.WriteLine($"min seg p = {_segMap.Min()}");
-                    //int bestSlice = FindMostActiveSlice(_segMap);
-                    //BaseImage.Source = RenderGrayscale(_patch, bestSlice);
-                    //OverlayImage.Source = RenderHeatmap(_segMap, bestSlice);
 
                     int initialSlice = _segMap is not null ? FindMostActiveSlice(_segMap) : PatchLoader.Size / 2;
                     SliceSlider.IsEnabled = true;
                     SliceSlider.Value = initialSlice;
-                    // Force render in case the slider value didn't change between loads
                     BaseImage.Source = RenderGrayscale(_patch, initialSlice);
                     OverlayImage.Source = _segMap is not null ? RenderHeatmap(_segMap, initialSlice) : null;
                 }
                 else
                 { 
-                    //BaseImage.Source = RenderGrayscale(_patch, PatchLoader.Size / 2);
-                    //OverlayImage.Source = null;
                     int initialSlice = _segMap is not null ? FindMostActiveSlice(_segMap) : PatchLoader.Size / 2;
                     SliceSlider.IsEnabled = true;
-                    SliceSlider.Value = initialSlice;
-                    // Force render in case the slider value didn't change between loads
+                    SliceSlider.Value = initialSlice;                 
                     BaseImage.Source = RenderGrayscale(_patch, initialSlice);
                     OverlayImage.Source = _segMap is not null ? RenderHeatmap(_segMap, initialSlice) : null;
                 }
@@ -107,7 +95,7 @@ namespace LungCancerIdentifierFrontEnd.Views
 
 
 
-                Debug.WriteLine($"[Patch] {Path.GetFileName(dialog.FileName)} → cancer probability = {result?.ClsProbability:P2} {amountOfRisk}");
+                //Debug.WriteLine($"[Patch] {Path.GetFileName(dialog.FileName)} → cancer probability = {result?.ClsProbability:P2} {amountOfRisk}");
             }
             catch (Exception ex)
             {
@@ -166,10 +154,10 @@ namespace LungCancerIdentifierFrontEnd.Views
                 byte alpha = (byte)(t * MaxOpacity * 255);
 
                 int dst = i * 4;
-                pixels[dst + 0] = 0;        // B
-                pixels[dst + 1] = 0;        // G
-                pixels[dst + 2] = 255;      // R = pure red
-                pixels[dst + 3] = alpha;    // A scales with seg probability
+                pixels[dst + 0] = 0;        
+                pixels[dst + 1] = 0;        
+                pixels[dst + 2] = 255;      
+                pixels[dst + 3] = alpha;    
             }
 
             return BitmapSource.Create(Size, Size, 96, 96,

@@ -10,7 +10,7 @@
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0"
-                Content="← Back"
+                Content="← Vissza"
                 Style="{StaticResource BackButton}"
                 HorizontalAlignment="Left"
                 Click="Back_Click"/>
@@ -20,7 +20,7 @@
                     VerticalAlignment="Center"
                     MaxWidth="520">
 
-            <TextBlock Text="How to Use MyApp"
+            <TextBlock Text="LCI Használati útmutató"
                        FontSize="32"
                        FontWeight="Bold"
                        Foreground="{StaticResource ForegroundBrush}"
@@ -30,24 +30,24 @@
            
             <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
                 <StackPanel>
-                    <TextBlock Text="1.  Start" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
-                    <TextBlock Text="Press Start on the home screen to open the file browser. Navigate to any file on your system and select it — its full path will be displayed."
+                    <TextBlock Text="1.  Kezdés" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Nem biztos abban, hogy a CT felvételen dagantos megbetegedést lát vagy sem? Nyomja meg a Start gombot, válassza ki a fájlt és a program elvégzi az elemzést."
                                FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
 
             <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
                 <StackPanel>
-                    <TextBlock Text="2.  Help" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
-                    <TextBlock Text="You're looking at it! This screen explains how the app works. Press the Back button to return to the home screen at any time."
+                    <TextBlock Text="2.  Útmutató" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Ezen a képernyőn található az alkalmazás használati útmutatója. Nyomja meg a Vissza gombot a főképernyőre való visszatéréshez bármikor."
                                FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
 
             <Border Background="{StaticResource ButtonBackgroundBrush}" CornerRadius="8" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="3.  Quit" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
-                    <TextBlock Text="Press Quit on the home screen to close the application safely."
+                    <TextBlock Text="3.  Kilépés" FontSize="15" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Nyomja meg a Kilépés gombot a főképernyőn az alkalmazás bezárásához."
                                FontSize="13" Foreground="#CCCCCC" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>

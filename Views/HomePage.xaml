@@ -16,19 +16,19 @@
                        Margin="0,0,0,10"/>
 
             <!-- Start Button -->
-            <Button Content="▶  Start"
+            <Button Content="▶  Kezdés"
                     Style="{StaticResource MenuButton}"
                     Margin="0,0,0,12"
                     Click="Start_Click"/>
 
             <!-- Help Button -->
-            <Button Content="?  Help"
+            <Button Content="?  Útmutató"
                     Style="{StaticResource MenuButton}"
                     Margin="0,0,0,12"
                     Click="Help_Click"/>
 
             <!-- Quit Button -->
-            <Button Content="✕  Quit"
+            <Button Content="✕  Kilépés"
                     Style="{StaticResource MenuButton}"
                     Click="Quit_Click"/>
 
