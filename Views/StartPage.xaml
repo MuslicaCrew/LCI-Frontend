@@ -5,11 +5,11 @@
 
     <Grid Margin="40">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>   <!-- Back button row -->
-            <RowDefinition Height="*"/>      <!-- Content -->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-     
+
         <Button Grid.Row="0"
                 Content="← Vissza"
                 Style="{StaticResource BackButton}"
@@ -83,7 +83,7 @@
                 </Grid>
             </StackPanel>
 
-       
+
             <Button Content="📂  Fájlok böngészése"
                     Style="{StaticResource OpenFileButton}"
                     HorizontalAlignment="Center"

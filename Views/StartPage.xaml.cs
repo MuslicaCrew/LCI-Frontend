@@ -15,8 +15,8 @@ namespace LungCancerIdentifierFrontEnd.Views
     {
         private readonly Frame _frame;
 
-        private float[]? _patch;     
-        private float[]? _segMap;    
+        private float[]? patch;     
+        private float[]? segMap;    
         public StartPage(Frame frame)
         {
             InitializeComponent();
@@ -25,10 +25,10 @@ namespace LungCancerIdentifierFrontEnd.Views
 
         private void SliceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (_patch is null) return;
+            if (patch is null) return;
             int slice = (int)e.NewValue;
-            BaseImage.Source = RenderGrayscale(_patch, slice);
-            OverlayImage.Source = _segMap is null ? null : RenderHeatmap(_segMap, slice);
+            BaseImage.Source = RenderGrayscale(patch, slice);
+            OverlayImage.Source = segMap is null ? null : RenderHeatmap(segMap, slice);
             SliceText.Text = $"Szelet {slice + 1} / 64";
         }
 
@@ -50,9 +50,9 @@ namespace LungCancerIdentifierFrontEnd.Views
 
             try
             {
-                _patch = PatchLoader.Load(dialog.FileName);
+                patch = PatchLoader.Load(dialog.FileName);
                 var result = OnnxModelService.RunInference(
-                    _patch, new[] { 1, 1, PatchLoader.Size, PatchLoader.Size, PatchLoader.Size });
+                    patch, new[] { 1, 1, PatchLoader.Size, PatchLoader.Size, PatchLoader.Size });
 
                 if (result is null)
                 {
@@ -71,25 +71,25 @@ namespace LungCancerIdentifierFrontEnd.Views
 
                 if (result.ClsProbability >= 0.5f)
                 { 
-                    _segMap = new float[result.SegLogits.Length];
+                    segMap = new float[result.SegLogits.Length];
                     for (int i = 0; i < result.SegLogits.Length; i++)
                     {
-                        _segMap[i] = 1f / (1f + MathF.Exp(-result.SegLogits[i]));
+                        segMap[i] = 1f / (1f + MathF.Exp(-result.SegLogits[i]));
                     }
 
-                    int initialSlice = _segMap is not null ? FindMostActiveSlice(_segMap) : PatchLoader.Size / 2;
+                    int initialSlice = segMap is not null ? FindMostActiveSlice(segMap) : PatchLoader.Size / 2;
                     SliceSlider.IsEnabled = true;
                     SliceSlider.Value = initialSlice;
-                    BaseImage.Source = RenderGrayscale(_patch, initialSlice);
-                    OverlayImage.Source = _segMap is not null ? RenderHeatmap(_segMap, initialSlice) : null;
+                    BaseImage.Source = RenderGrayscale(patch, initialSlice);
+                    OverlayImage.Source = segMap is not null ? RenderHeatmap(segMap, initialSlice) : null;
                 }
                 else
                 { 
-                    int initialSlice = _segMap is not null ? FindMostActiveSlice(_segMap) : PatchLoader.Size / 2;
+                    int initialSlice = segMap is not null ? FindMostActiveSlice(segMap) : PatchLoader.Size / 2;
                     SliceSlider.IsEnabled = true;
                     SliceSlider.Value = initialSlice;                 
-                    BaseImage.Source = RenderGrayscale(_patch, initialSlice);
-                    OverlayImage.Source = _segMap is not null ? RenderHeatmap(_segMap, initialSlice) : null;
+                    BaseImage.Source = RenderGrayscale(patch, initialSlice);
+                    OverlayImage.Source = segMap is not null ? RenderHeatmap(segMap, initialSlice) : null;
                 }
 
 
