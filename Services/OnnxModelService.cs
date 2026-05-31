@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using static LungCancerIdentifierFrontEnd.Services.OnnxModelService;
+using static LungCancerIdentifierFrontEnd.Views.StartPage;
 
 namespace LungCancerIdentifierFrontEnd.Services
 {
@@ -23,10 +24,8 @@ namespace LungCancerIdentifierFrontEnd.Services
                     return;
                 }
 
-                var options = new SessionOptions();
-                // options.AppendExecutionProvider_CUDA(0); // if using the GPU package
-
-                _session = new InferenceSession(modelPath, options);
+         
+                _session = new InferenceSession(modelPath);
 
                 Debug.WriteLine($"[ONNX] Loaded model: {modelPath}");
                 foreach (var kv in _session.InputMetadata)
@@ -47,7 +46,7 @@ namespace LungCancerIdentifierFrontEnd.Services
         }
 
         public static InferenceResult? RunInference(float[] data, int[] shape)
-        {
+        {     
             float ThresholdLogit = (float)Math.Log(0.221f / 0.779f);  // logit(0.221) — the F1-optimal threshold
             const float T = 0.4f;
 
@@ -61,11 +60,11 @@ namespace LungCancerIdentifierFrontEnd.Services
 
             float clsLogit = 0f;
             float[] segLogits = Array.Empty<float>();
-            foreach (var r in results)
+            foreach (var result in results)
             {
-                var arr = r.AsTensor<float>().ToArray();
-                if (r.Name == "cls_prob") clsLogit = arr[0];
-                else if (r.Name == "seg_map") segLogits = arr;
+                var arr = result.AsTensor<float>().ToArray();
+                if (result.Name == "cls_prob") clsLogit = arr[0];
+                else if (result.Name == "seg_map") segLogits = arr;
             }
 
             return new InferenceResult
