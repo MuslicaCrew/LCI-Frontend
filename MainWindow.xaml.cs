@@ -8,8 +8,7 @@ namespace LungCancerIdentifierFrontEnd
         public MainWindow()
         {
             InitializeComponent();
-            // Start on the Home page
-            MainFrame.Navigate(new HomePage(MainFrame));
+            MainFrame.Navigate(new HomePage(MainFrame));           
         }
     }
 }
