@@ -11,8 +11,8 @@ namespace LungCancerIdentifierFrontEnd.Services
 {
     public static class OnnxModelService
     {
-        private static InferenceSession? _session;
-        public static bool IsLoaded => _session is not null;
+        private static InferenceSession? session;
+        public static bool IsLoaded => session is not null;
 
         public static void Load(string modelPath)
         {
@@ -22,20 +22,13 @@ namespace LungCancerIdentifierFrontEnd.Services
                 {
                     Debug.WriteLine($"\n\n[ONNX] Model not found: {modelPath}\n\n");
                     return;
-                }
-
-         
-                _session = new InferenceSession(modelPath);
-
-                Debug.WriteLine($"[ONNX] Loaded model: {modelPath}");
-                foreach (var kv in _session.InputMetadata)
-                    Debug.WriteLine($"[ONNX]  input  '{kv.Key}' shape=[{string.Join(",", kv.Value.Dimensions)}] dtype={kv.Value.ElementType}");
-                foreach (var kv in _session.OutputMetadata)
-                    Debug.WriteLine($"[ONNX]  output '{kv.Key}' shape=[{string.Join(",", kv.Value.Dimensions)}] dtype={kv.Value.ElementType}");
+                }                       
+                session = new InferenceSession(modelPath);
+                Debug.WriteLine($"\n\n[ONNX] Loaded model: {modelPath}\n\n");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[ONNX] Load failed: {ex.Message}");
+                Debug.WriteLine($"\n\n[ONNX] Load failed: {ex.Message}\n\n");
             }
         }
 
@@ -47,16 +40,16 @@ namespace LungCancerIdentifierFrontEnd.Services
 
         public static InferenceResult? RunInference(float[] data, int[] shape)
         {     
-            float ThresholdLogit = (float)Math.Log(0.221f / 0.779f);  // logit(0.221) — the F1-optimal threshold
-            const float T = 0.4f;
+            float ThresholdLogit = (float)Math.Log(0.263f / 0.737f);
+            const float T = 0.6927f;
 
-            if (_session is null) return null;
+            if (session is null) return null;
 
-            var inputName = _session.InputMetadata.Keys.First();
+            var inputName = session.InputMetadata.Keys.First();
             var tensor = new DenseTensor<float>(data, shape);
             var inputs = new[] { NamedOnnxValue.CreateFromTensor(inputName, tensor) };
 
-            using var results = _session.Run(inputs);
+            using var results = session.Run(inputs);
 
             float clsLogit = 0f;
             float[] segLogits = Array.Empty<float>();
@@ -77,8 +70,8 @@ namespace LungCancerIdentifierFrontEnd.Services
 
         public static void Dispose()
         {
-            _session?.Dispose();
-            _session = null;
+            session?.Dispose();
+            session = null;
         }
     }
 }
