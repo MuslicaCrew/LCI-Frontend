@@ -13,3 +13,6 @@ dotnet publish -c Release
 ```
 ## Running the application
 Inside the win-x64/Publish folder run the EXE file to run the application
+
+## Using the application
+When running the application browse the patches folder (same release but different zip) for positive and negative patches.
